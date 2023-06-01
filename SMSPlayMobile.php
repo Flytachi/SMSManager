@@ -3,7 +3,7 @@
 /**
  *  PHP Integration SMS-API
  *  Uzbekistan ООО “PLAY MOBILE”
- *  @version 1.0
+ *  @version 2.0
  *  @author itachi
  */
 class SMSPlayMobile
@@ -172,11 +172,16 @@ class SMSPlayMobile
             CURLOPT_HTTPHEADER => ['Content-Type: application/json'],
         ]);
         $response = curl_exec($curl);
+        $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
         $response = json_decode($response, true);
         curl_close($curl);
 
-        if ($response && array_key_exists('error-code', $response))
-            throw new LogicException($this->errors[$response['error-code']]['ru']);
+        if ($status != 200) {
+            $message = __CLASS__ . ' returned HTTP status code ' . $status;
+            if ($response && array_key_exists('error-code', $response))
+                $message .= ': ' . $this->errors[$response['error-code']]['en'];
+            throw new LogicException($message);
+        }
     }
 
     /**
@@ -225,10 +230,15 @@ class SMSPlayMobile
             CURLOPT_HTTPHEADER => ['Content-Type: application/json'],
         ]);
         $response = curl_exec($curl);
+        $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
         $response = json_decode($response, true);
         curl_close($curl);
 
-        if ($response && array_key_exists('error-code', $response))
-            throw new LogicException($this->errors[$response['error-code']]['ru']);
+        if ($status != 200) {
+            $message = __CLASS__ . ' returned HTTP status code ' . $status;
+            if ($response && array_key_exists('error-code', $response))
+                $message .= ': ' . $this->errors[$response['error-code']]['en'];
+            throw new LogicException($message);
+        }
     }
 }
